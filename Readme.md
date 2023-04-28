@@ -16,24 +16,46 @@ change any of the swagger/oauth config the swagger ui might break.
 Tasks and assignments (in no particular order):
 
 - get familiar with the code base and understand what happens where
-    - how many test accounts are provided in the initial state of the database?
-    - what id did you get at auth0?
+    - how many test accounts are provided in the initial state of the database?<br/>
+      Answer: There are 3 records provided.We can find them in the data.sql
+    - what id did you get at auth0?<br/>
+  Answer: Not really sure what id was asked here but from what I see from there we take the JWT(JSON Web token) "Bearer {token}"
     - where is the implementation of the database access methods?
-    - why are there two different application files?
-    - are the logs meaningful?
-- compile and run application from the command line (hint: activate the spring local profile )
-- get application to run in IntelliJ IDEA (or some other IDE) with the local profile
+<br/>Answer: it is handled by spring data jpa it automatically generates implementaion from the contract. Also,it has some predefined methods in the JpaRepository for the usual functionalities.Providing the two generic arguments to the interface shows which entity is being operated on and its identifier
+    - why are there two different application files?<br/>
+  Answer: if we are talking about the application.yml files we can have different configuration depending on environments or etc. so we need a way to set those different configuration properties so using the spring profiles help us to resolve which yml files with config to take 
+    - are the logs meaningful? <br/>
+      Answer:For the purpose of tracking general stuff and project running they are not.TRACE logging level can be meaningful if we investigate an issue with our app or connection with other apps and services but for the sake of development it is polluting the logs.For the current implementation INFO logging level should be enough
+- compile and run application from the command line (hint: activate the spring local profile ) <br/>
+  Answer:mvn spring-boot:run -Dspring-boot.run.profiles=local <br/>
+- get application to run in IntelliJ IDEA (or some other IDE) with the local profile <br/> Answer:
+In InteliJIDEA edit configuration and place local profile in Active Profiles input or if we need a more general solution is modify the pom.xml and place profiles there with corresponding property for spring profiles and set the value to local
 - create a docker container out of jar file and run it locally (using again the local profile)
 
 Known errors and issues (there certainly are more, we'd be happy if you share your findings with us):
 
-- the application is logging too much data - reduce the amount of logs
+- the application is logging too much data - reduce the amount of logs<br/>
+Answer: Change the logging level in the application-local.yml to INFO  
 - the update operation is currently broken and results in a 500 error even when provided with valid parameters and
-  should be fixed
-- when a customer id is not found in the DB the application should return a 404 error instead of 500
+  should be fixed<br/>
+Answer: it was because of the anonymization and changed in code
+- when a customer id is not found in the DB the application should return a 404 error instead of 500<br/>
+  Answer:Its because there was no checks whether the customer exists and when returned null throws error.when missing handeled with another implementation in GlobalExceptionHandler.
 - when performing an update and changing the customer's email address, the new address is never persisted, but it should
-  be
-- when performing the getuser operation private customer data is logged in plaintext to the log, it should be anonymised
+  be<br/>
+Answer:The setter is never called
+- when performing the getuser operation private customer data is logged in plaintext to the log, it should be anonymised<br/>
+  Answer:Changed in the code
+#Additional found errors and issues:
+- id in the table is integer but in code it is Long type so potentially change the type in the db schema to be BIGINT
+- ddl auto is update so if there is a change in the entity will reflect it in the schema. As we have taken the approach of defining the schema outside in the schema.sql I think it would be better to correct the schema and change the type to validate so we have additionally a validation on the schema 
+- Rather than concatenating messages for logs or exceptions we can use String format or the logger formatting. It will save some unnecessary String creation and will be more readable
+- We can create checks whether that type of logging is enabled. It can save some iterations because internally it also checks if that type of logging is enabled and if not it does not log it
+- if we want to increase performance by little: The anonymization can be done with StringBuilder rather than StringBuffer as it is faster
+- Logic for anonymization simplified and fixed
+- Encapsulate loggers further with private and we need only one instance so we place final as well
+- Changed in GlobalExceptionHandler to return to the user more appropriate messages
+- Validation was not working although annotations were used so added spring boot starter validation dependency and corresponding annotations and error handling
 
 Possible extensions (only describe how you would implement them, no actual implementation required):
 
@@ -42,4 +64,5 @@ Possible extensions (only describe how you would implement them, no actual imple
 - introduce access restrictions - allow access only for certain authenticated principals, allow certain operations only
   for certain authenticated principals
 - testing & documentation - what are good candidates for unit tests, integration tests, what needs to be documented?
-- introduce additional logging and error handling where necessary
+- introduce additional logging and error handling where necessary<br/>
+Answer: added check on GET request for customer

@@ -1,0 +1,14 @@
+C:\Users\veli\Desktop\interview\src\main\java\com\icconsult\interview\usermanagement\api\dto\CustomerRequest.java
+C:\Users\veli\Desktop\interview\src\main\java\com\icconsult\interview\usermanagement\persistance\CustomerRepository.java
+C:\Users\veli\Desktop\interview\src\main\java\com\icconsult\interview\usermanagement\security\SecurityConfiguration.java
+C:\Users\veli\Desktop\interview\src\main\java\com\icconsult\interview\usermanagement\behavior\DefaultCustomerManagementService.java
+C:\Users\veli\Desktop\interview\src\main\java\com\icconsult\interview\usermanagement\exception\NotAuthorizedException.java
+C:\Users\veli\Desktop\interview\src\main\java\com\icconsult\interview\usermanagement\api\dto\ErrorResponse.java
+C:\Users\veli\Desktop\interview\src\main\java\com\icconsult\interview\usermanagement\persistance\CustomerEntity.java
+C:\Users\veli\Desktop\interview\src\main\java\com\icconsult\interview\usermanagement\exception\CustomerNotFoundException.java
+C:\Users\veli\Desktop\interview\src\main\java\com\icconsult\interview\usermanagement\api\endpoint\CustomerEndpoint.java
+C:\Users\veli\Desktop\interview\src\main\java\com\icconsult\interview\usermanagement\api\GlobalExceptionHandler.java
+C:\Users\veli\Desktop\interview\src\main\java\com\icconsult\interview\usermanagement\CustomerManagementApplication.java
+C:\Users\veli\Desktop\interview\src\main\java\com\icconsult\interview\usermanagement\api\dto\CustomerResponse.java
+C:\Users\veli\Desktop\interview\src\main\java\com\icconsult\interview\usermanagement\behavior\CustomerManagementService.java
+C:\Users\veli\Desktop\interview\src\main\java\com\icconsult\interview\usermanagement\OpenAPIConfig.java

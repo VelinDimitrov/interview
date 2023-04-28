@@ -12,6 +12,7 @@
 
 package com.icconsult.interview.usermanagement.api.endpoint;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 
 import com.icconsult.interview.usermanagement.api.dto.CustomerRequest;
@@ -61,8 +62,8 @@ public class CustomerEndpoint {
                             schema = @Schema(implementation = CustomerResponse.class))}),
             @ApiResponse(responseCode = "403", description = "The currently authenticated principal is not permitted to access this customer's data",
                     content = @Content)})
-    @GetMapping()
-    public CustomerResponse getCustomer(@AuthenticationPrincipal Jwt jwt, @Parameter(description = "Cross system customer id (uuid)") @Pattern(regexp = "^[a-z0-9-]*$") @PathVariable("uuid") String userId) {
+    @GetMapping
+    public CustomerResponse getCustomer(@AuthenticationPrincipal Jwt jwt, @Parameter(description = "Cross system customer id (uuid)")@Valid @Pattern(regexp = "^[a-z0-9-]*$") @PathVariable("uuid") String userId) {
         return customerService.getCustomer(userId);
     }
 
@@ -77,16 +78,18 @@ public class CustomerEndpoint {
                             schema = @Schema(implementation = CustomerResponse.class))}),
             @ApiResponse(responseCode = "403", description = "The currently authenticated principal is not permitted to update this customer's data",
                     content = @Content)})
-    @PutMapping()
+    @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public CustomerResponse putCustomer (@AuthenticationPrincipal Jwt jwt, @Parameter(description = "Cross system customer id (uuid)")  @Pattern(regexp = "^[a-z0-9-]*$") @PathVariable("uuid") String userId, @RequestBody final CustomerRequest customerRequestValue) {
+    public CustomerResponse putCustomer (@AuthenticationPrincipal Jwt jwt, @Parameter(description = "Cross system customer id (uuid)")@Valid  @Pattern(regexp = "^[a-z0-9-]*$") @PathVariable("uuid") String userId,@Valid @RequestBody final CustomerRequest customerRequestValue) {
         return customerService.updateCustomer(userId, extractUserId(jwt), customerRequestValue);
     }
 
     private String extractUserId(Jwt jwt) {
         if (jwt != null && jwt.getSubject() != null) {
-            logger.trace("Obtained token: " + jwt.getTokenValue());
-            logger.info("User attempting write operation: [" + jwt.getSubject() + "].");
+            if (logger.isTraceEnabled()){
+                logger.trace("Obtained token: {}",jwt.getTokenValue());
+            }
+            logger.info("User attempting write operation: [{}].",jwt.getSubject());
             return jwt.getSubject();
         } else {
             throw new NotAuthorizedException("No subject assigned.");

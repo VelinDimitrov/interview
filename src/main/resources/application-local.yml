@@ -35,6 +35,6 @@ server:
   port: '8080'
 logging:
   level:
-    root: TRACE
+    root: INFO
 
 

@@ -17,6 +17,7 @@ import com.icconsult.interview.usermanagement.api.dto.CustomerResponse;
 import com.icconsult.interview.usermanagement.exception.CustomerNotFoundException;
 import com.icconsult.interview.usermanagement.persistance.CustomerEntity;
 import com.icconsult.interview.usermanagement.persistance.CustomerRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,56 +26,50 @@ import org.springframework.stereotype.Service;
 @Service
 public class DefaultCustomerManagementService implements CustomerManagementService {
 
-    Logger logger = LoggerFactory.getLogger(DefaultCustomerManagementService.class);
+    private static final String CANNOT_FIND_CUSTOMER_WITH_USER_ID_FORMAT = "Cannot find customer with user id : %s.";
+    private static final String CANNOT_FIND_CUSTOMER_FOR_UPDATE_FORMAT = "Cannot find customer for update: [%s].";
+    private final Logger logger = LoggerFactory.getLogger(DefaultCustomerManagementService.class);
 
     @Autowired
     CustomerRepository customerRepository;
 
     @Override
     public CustomerResponse getCustomer(String userId) {
-        CustomerEntity customerEntity = customerRepository.findByUserId(userId);
-        logger.info("Successfully retrieved customer from: [givenName=" + customerEntity.getGivenName() + ", familyName=" + customerEntity.getFamilyName() + "email=" + customerEntity.getEmail() + "].");
+        CustomerEntity customerEntity = customerRepository.findByUserId(userId).orElseThrow(() -> new CustomerNotFoundException(String.format(CANNOT_FIND_CUSTOMER_WITH_USER_ID_FORMAT, userId)));
+        logger.info("Successfully retrieved customer : [givenName={}, familyName={}, email={}].", anonymizeString(customerEntity.getGivenName()), anonymizeString(customerEntity.getFamilyName()), anonymizeString(customerEntity.getEmail()));
         return toCustomerResponse(customerEntity);
     }
 
     @Override
     public CustomerResponse updateCustomer(String userId, String admin, CustomerRequest newCustomerEntry) {
-        CustomerEntity customerEntity = customerRepository.findByUserId(userId);
+        CustomerEntity customerEntity = customerRepository.findByUserId(userId).orElseThrow(() -> {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Tried to update customer entry which doesn't exist in DB. Nonexistent customer uuid: [{}].", userId);
+            }
+            return new CustomerNotFoundException(String.format(CANNOT_FIND_CUSTOMER_FOR_UPDATE_FORMAT, userId));
+        });
 
-        if (customerEntity == null) {
-            logger.warn("Tried to update customer entry which doesn't exist in DB. Nonexistent customer uuid: [" + userId + "].");
-            throw new CustomerNotFoundException("Cannot find customer for update: [" + userId + "].");
-        } else {
-            customerEntity.setFamilyName(newCustomerEntry.getFamilyName());
-            customerEntity.setGivenName(newCustomerEntry.getGivenName());
-        }
+        customerEntity.setFamilyName(newCustomerEntry.getFamilyName());
+        customerEntity.setGivenName(newCustomerEntry.getGivenName());
+        customerEntity.setEmail(newCustomerEntry.getEmail());
 
         try {
             customerRepository.save(customerEntity);
-            logger.info("Customer update successful, new values: [givenName=" + anonymizeString(customerEntity.getGivenName()) + ", familyName=" + anonymizeString(customerEntity.getFamilyName()) + "email=" + anonymizeString(customerEntity.getEmail()) + "].");
+            logger.info("Customer update successful, new values: [givenName={}, familyName={}, email={}].", anonymizeString(customerEntity.getGivenName()), anonymizeString(customerEntity.getFamilyName()), anonymizeString(customerEntity.getEmail()));
             return toCustomerResponse(customerEntity);
         } catch (Exception e) {
-            logger.error("Error while trying to update customer [{}]", e.getMessage(), e);
+            if (logger.isErrorEnabled()) {
+                logger.error("Error while trying to update customer [{}]", e.getMessage(), e);
+            }
             throw e;
         }
     }
 
     private CustomerResponse toCustomerResponse(CustomerEntity customerEntity) {
-        CustomerResponse response = new CustomerResponse(customerEntity.getUserId(), customerEntity.getGivenName(), customerEntity.getFamilyName(), customerEntity.getEmail());
-        return response;
+        return new CustomerResponse(customerEntity.getUserId(), customerEntity.getGivenName(), customerEntity.getFamilyName(), customerEntity.getEmail());
     }
 
     private String anonymizeString(String plaintext) {
-        if (plaintext == null || plaintext.isBlank() || plaintext.length() <= 2) {
-            return plaintext;
-        } else {
-            StringBuffer output = new StringBuffer();
-            output.append(plaintext.charAt(0));
-            for (int i = 0; i < plaintext.length() - 2; ++i) {
-                output.append('*');
-            }
-            output.append(plaintext.charAt(plaintext.length()));
-            return output.toString();
-        }
+        return StringUtils.isBlank(plaintext) || plaintext.length() <= 2 ? plaintext : "*".repeat(plaintext.length());
     }
 }

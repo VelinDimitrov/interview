@@ -1,0 +1,40 @@
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    server: https://example.com
+    disable-swagger-default-url: 'true'
+    path: /swagger-ui.html
+    oauth:
+      client-id: $CLIENT_ID
+      client-secret: $CLIENT_SECRET
+      additional-query-string-params:
+        audience: customer
+      use-basic-authentication-with-access-code-grant: 'true'
+  oAuthFlow:
+    authorizationUrl: https://icc-demo.eu.auth0.com/authorize
+    tokenUrl: https://icc-demo.eu.auth0.com/oauth/token
+
+spring:
+  datasource:
+    username: admin
+    password: nimda
+    url: jdbc:h2:mem:customerdb
+    driverClassName: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://icc-demo.eu.auth0.com/.well-known/jwks.json
+          issuer-uri: https://icc-demo.eu.auth0.com/
+server:
+  port: '8888'
+logging:
+  level:
+    root: TRACE
+
+

@@ -14,6 +14,7 @@ package com.icconsult.interview.usermanagement.api.dto;
 
 import java.util.Objects;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 public class CustomerRequest {
@@ -25,6 +26,7 @@ public class CustomerRequest {
     private final String familyName;
 
     @NotBlank
+    @Email
     private final String email;
 
     public CustomerRequest(String givenName, String familyName, String email) {

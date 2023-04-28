@@ -1,0 +1,14 @@
+com\icconsult\interview\usermanagement\CustomerManagementApplication.class
+com\icconsult\interview\usermanagement\OpenAPIConfig.class
+com\icconsult\interview\usermanagement\behavior\DefaultCustomerManagementService.class
+com\icconsult\interview\usermanagement\persistance\CustomerEntity.class
+com\icconsult\interview\usermanagement\api\dto\CustomerResponse.class
+com\icconsult\interview\usermanagement\security\SecurityConfiguration.class
+com\icconsult\interview\usermanagement\api\GlobalExceptionHandler.class
+com\icconsult\interview\usermanagement\api\dto\CustomerRequest.class
+com\icconsult\interview\usermanagement\exception\CustomerNotFoundException.class
+com\icconsult\interview\usermanagement\behavior\CustomerManagementService.class
+com\icconsult\interview\usermanagement\exception\NotAuthorizedException.class
+com\icconsult\interview\usermanagement\api\dto\ErrorResponse.class
+com\icconsult\interview\usermanagement\persistance\CustomerRepository.class
+com\icconsult\interview\usermanagement\api\endpoint\CustomerEndpoint.class
