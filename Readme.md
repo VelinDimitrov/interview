@@ -59,10 +59,15 @@ Answer:The setter is never called
 
 Possible extensions (only describe how you would implement them, no actual implementation required):
 
-- introduce a method for creating new customers
-- introduce a method for updating certain attributes
+- introduce a method for creating new customers<br/>
+Answer: We can create a POST endpoint with path /api/v1/customer which will accept a pojo which will be similar to the CustomerRequest(it will contain the user id as well) with similar validations as the PUT request . We will have the corresponding checks for whether the customer exists and also if we add roles we can validate the role of the logged in user. 
+- introduce a method for updating certain attributes <br/>
+Answer: We can create a PATCH endpoint for partial update with path /api/v1/customer/${id} which will accept a pojo which will be similar to the CustomerRequest(it will contain the user id as well) with similar validations as the PUT/POST request . We will have the corresponding checks for whether the customer exists and also if we add roles we can validate the role of the logged in user.
 - introduce access restrictions - allow access only for certain authenticated principals, allow certain operations only
-  for certain authenticated principals
-- testing & documentation - what are good candidates for unit tests, integration tests, what needs to be documented?
+  for certain authenticated principals<br/>
+Answer: I would introduce certain roles for the users and adapt the token generation process to include those roles inside the token and on request we can validate with filters or with checks in code.<br/>
+If we cannot modify the mechanism for token generation we can still introduce the roles on db side and use the userId from the token to fetch the user roles and validate against them
+- testing & documentation - what are good candidates for unit tests, integration tests, what needs to be documented?<br/>
+Answer:Everything should have unit tests but a good first candidate is the anonymization logic, extraction of the jwt userid logic, the entity and pojos overriden methods(hashcode,equals), the service logic as well.<br/> For integration tests a good candidate is the customer endpoints and the security integration,and the exception handling.<br/> For Documentation : the endpoint with swagger annotations and more of the complex business logic annonymisation(before my simplification of it) and potentially extraction of jwt as well as some business logic if not clear enough from code namings and conventions.
 - introduce additional logging and error handling where necessary<br/>
-Answer: added check on GET request for customer
+Answer: added check on GET request for customer and additional changes in code for better readability when logging
