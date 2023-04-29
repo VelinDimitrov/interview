@@ -28,6 +28,8 @@ Tasks and assignments (in no particular order):
       Answer:For the purpose of tracking general stuff and project running they are not.TRACE logging level can be meaningful if we investigate an issue with our app or connection with other apps and services but for the sake of development it is polluting the logs.For the current implementation INFO logging level should be enough
 - compile and run application from the command line (hint: activate the spring local profile ) <br/>
   Answer:mvn spring-boot:run -Dspring-boot.run.profiles=local <br/>
+OR<br/>
+ in project root run: java -Dspring.profiles.active=local -jar target/usermanagement-0.0.1.jar
 - get application to run in IntelliJ IDEA (or some other IDE) with the local profile <br/> Answer:
 In InteliJIDEA edit configuration and place local profile in Active Profiles input or if we need a more general solution is modify the pom.xml and place profiles there with corresponding property for spring profiles and set the value to local
 - create a docker container out of jar file and run it locally (using again the local profile)
