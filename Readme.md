@@ -32,7 +32,8 @@ OR<br/>
  in project root run: java -Dspring.profiles.active=local -jar target/usermanagement-0.0.1.jar
 - get application to run in IntelliJ IDEA (or some other IDE) with the local profile <br/> Answer:
 In InteliJIDEA edit configuration and place local profile in Active Profiles input or if we need a more general solution is modify the pom.xml and place profiles there with corresponding property for spring profiles and set the value to local
-- create a docker container out of jar file and run it locally (using again the local profile)
+- create a docker container out of jar file and run it locally (using again the local profile)<br/>
+Docker file created after that execute "docker build . -t usermanagement" to build image and to run the image "docker run -p 8085:8085 usermanagement"
 
 Known errors and issues (there certainly are more, we'd be happy if you share your findings with us):
 
